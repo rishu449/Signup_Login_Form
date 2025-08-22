@@ -6,7 +6,7 @@ function UserDashboard() {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    // get currently logged-in user
+   
     const currentUser = auth.currentUser;
 
     if (currentUser) {
@@ -14,7 +14,7 @@ function UserDashboard() {
 
       getDoc(userRef).then((docSnap) => {
         if (docSnap.exists()) {
-          setUserData(docSnap.data()); // save user data in state
+          setUserData(docSnap.data()); 
         } else {
           console.log("❌ No such user!");
         }

@@ -100,7 +100,7 @@ function Signup() {
           <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         </div>
 
-        {/* Inputs same order/positions as before */}
+      
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8">
           {/* Name */}
           <div>
