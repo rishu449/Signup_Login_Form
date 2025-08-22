@@ -19,7 +19,7 @@ function Login() {
     console.log("✅ Login Data:", data);
     toast.success("Login Successful 🎉", { position: "top-center" });
     setTimeout(() => {
-      navigate("/userdashboard"); // redirect after login
+      navigate("/userdashboard"); 
     }, 2000);
   };
 
