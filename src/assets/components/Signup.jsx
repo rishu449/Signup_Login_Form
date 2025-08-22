@@ -88,7 +88,7 @@ function Signup() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-300 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <ToastContainer position="top-center" />
 
       <form
@@ -96,7 +96,7 @@ function Signup() {
         className="bg-white shadow-lg rounded-2xl w-full max-w-3xl"
       >
         {/* Header */}
-        <div className="flex justify-center items-center bg-emerald-300 text-white py-5 rounded-t-2xl">
+        <div className="flex justify-center items-center bg-emerald-800 text-white py-5 rounded-t-2xl">
           <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         </div>
 
