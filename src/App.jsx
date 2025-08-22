@@ -18,7 +18,7 @@ function App() {
       <Route path='/login'element={<Login/>}/>
       <Route path='/userdashboard'element={<UserDashboard/>}/>
      </Routes>
-     <ToastContainer />
+     <ToastContainer position="top-center" autoClose={3000}/>
      </BrowserRouter>
     </>
   )

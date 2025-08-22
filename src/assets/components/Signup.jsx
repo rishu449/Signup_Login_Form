@@ -1,4 +1,4 @@
-
+// src/pages/auth/Signup.jsx
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,76 +26,86 @@ function Signup() {
   const password = watch("password");
   const username = watch("username");
 
- const onSubmit = async (data) => {
-  setLoading(true);
-  try {
-    const { user } = await createUserWithEmailAndPassword(
-      auth,
-      data.email,
-      data.password
-    );
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
 
-    await user.getIdToken(true);
+      await user.getIdToken(true);
 
-    const userRef = doc(fireDB, "users", user.uid);
-    await setDoc(
-      userRef,
-      {
-        uid: user.uid,
-        name: data.name,
-        username: data.username,
-        email: data.email,
-        phone: `+91${data.phone}`,
-        createdAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+      const userRef = doc(fireDB, "users", user.uid);
+      await setDoc(
+        userRef,
+        {
+          uid: user.uid,
+          name: data.name,
+          username: data.username,
+          email: data.email,
+          phone: `+91${data.phone}`,
+          createdAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
 
-    toast.success("Signup Successful 🎉", {
-      position: "top-center",
-      autoClose: 1500,
-    });
+      // ✅ Save user data to localStorage
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          username: data.username,
+          password: data.password,
+          email: data.email,
+          phone: data.phone,
+        })
+      );
 
-    reset();
+      toast.success("Signup Successful 🎉", {
+        position: "top-center",
+        autoClose: 1500,
+      });
 
-    // ✅ Do not stop loading here, keep spinner until redirect
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500);
-  } catch (error) {
-    console.error("❌ Signup Error:", error);
-    switch (error.code) {
-      case "auth/email-already-in-use":
-        toast.error("This email is already registered. Please login!", {
-          position: "top-center",
-        });
-        break;
-      case "auth/weak-password":
-        toast.error("Password should be at least 6 characters!", {
-          position: "top-center",
-        });
-        break;
-      case "auth/invalid-email":
-        toast.error("Invalid email address!", {
-          position: "top-center",
-        });
-        break;
-      default:
-        toast.error(error.message || "Something went wrong. Try again!", {
-          position: "top-center",
-        });
+      reset();
+
+      // ✅ Keep loader until redirect
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (error) {
+      console.error("❌ Signup Error:", error);
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          toast.error("This email is already registered. Please login!", {
+            position: "top-center",
+          });
+          break;
+        case "auth/weak-password":
+          toast.error("Password should be at least 6 characters!", {
+            position: "top-center",
+          });
+          break;
+        case "auth/invalid-email":
+          toast.error("Invalid email address!", {
+            position: "top-center",
+          });
+          break;
+        default:
+          toast.error(error.message || "Something went wrong. Try again!", {
+            position: "top-center",
+          });
+      }
+      setLoading(false); // ✅ only reset loading if error occurs
     }
-    setLoading(false); // ✅ only reset loading if there's an error
-  }
-};
-
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <ToastContainer position="top-center" />
 
       {loading ? (
-        // Fullscreen Loader
+        // ✅ Fullscreen Loader
         <div className="flex flex-col items-center justify-center">
           <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-4 text-emerald-700 font-semibold text-lg sm:text-xl">
@@ -203,34 +213,32 @@ function Signup() {
             </div>
 
             {/* Password */}
-         {/* Password */}
-<div className="relative">
-  <label className="block mb-1 font-medium">Password</label>
-  <input
-    type={showPassword ? "text" : "password"}
-    {...register("password", {
-      required: "Password is required",
-      pattern: {
-        value: /^[a-zA-Z0-9@]+$/,   // ✅ Only alphabets, numbers, and @
-        message: "Only letters, numbers, and @ are allowed",
-      },
-      validate: (value) =>
-        value !== username || "Password cannot be same as username",
-    })}
-    className="w-full border rounded-lg px-3 py-2"
-    placeholder="Enter your password"
-  />
-  <span
-    onClick={() => setShowPassword(!showPassword)}
-    className="absolute top-10 right-3 cursor-pointer text-gray-500"
-  >
-    {showPassword ? <FaEyeSlash /> : <FaEye />}
-  </span>
-  {errors.password && (
-    <p className="text-red-500 text-sm">{errors.password.message}</p>
-  )}
-</div>
-
+            <div className="relative">
+              <label className="block mb-1 font-medium">Password</label>
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Password is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9@]+$/, // ✅ Only alphabets, numbers, and @
+                    message: "Only letters, numbers, and @ are allowed",
+                  },
+                  validate: (value) =>
+                    value !== username || "Password cannot be same as username",
+                })}
+                className="w-full border rounded-lg px-3 py-2"
+                placeholder="Enter your password"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-10 right-3 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password.message}</p>
+              )}
+            </div>
 
             {/* Confirm Password */}
             <div className="relative">

@@ -15,16 +15,33 @@ function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState(""); // 🔹 state for inline error
 
   const onSubmit = (data) => {
     console.log("✅ Login Data:", data);
-    toast.success("Login Successful 🎉", { position: "top-center" });
-    setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/userdashboard");
-    }, 2000);
+    // 🔹 Fetch saved signup user from localStorage
+    const savedUser = JSON.parse(localStorage.getItem("userData"));
+
+    if (
+      savedUser &&
+      savedUser.username === data.username &&
+      savedUser.password === data.password
+    ) {
+      setLoginError(""); // clear old error
+      toast.success("Login Successful 🎉", { position: "top-center" });
+      setLoading(true);
+
+      setTimeout(() => {
+        setLoading(false);
+        navigate("/userdashboard");
+      }, 2000);
+    } else {
+      setLoginError("Invalid Username or Password ❌"); // show inline error
+      toast.error("Invalid Username or Password ❌", {
+        position: "top-center",
+      });
+    }
   };
 
   return (
@@ -55,11 +72,6 @@ function Login() {
                 type="text"
                 {...register("username", {
                   required: "Username is required",
-                  pattern: {
-                    value: /^[A-Za-z0-9._@-]+$/,
-                    message:
-                      "Only alphanumeric and special chars . _ @ - allowed",
-                  },
                 })}
                 className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
                 placeholder="USERNAME"
@@ -77,11 +89,6 @@ function Login() {
                 type={showPassword ? "text" : "password"}
                 {...register("password", {
                   required: "Password is required",
-                  pattern: {
-                    value: /^[A-Za-z0-9._@-]+$/,
-                    message:
-                      "Only alphanumeric and special chars . _ @ - allowed",
-                  },
                 })}
                 className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
                 placeholder="PASSWORD"
@@ -96,6 +103,9 @@ function Login() {
                 <p className="text-red-500 text-sm">
                   {errors.password.message}
                 </p>
+              )}
+              {loginError && (
+                <p className="text-red-600 text-sm mt-2">{loginError}</p>
               )}
             </div>
           </div>
